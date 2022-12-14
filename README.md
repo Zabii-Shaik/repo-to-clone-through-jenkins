@@ -11,3 +11,4 @@ going and checking jenkins
 How r u all......??*
 How r u all......??*
 How r u all......??*
+Setup jenkins 
