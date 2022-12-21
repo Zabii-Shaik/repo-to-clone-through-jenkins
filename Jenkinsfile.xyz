@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+    tools {
+        jdk 'jdk-11'
+        maven 'maven'
+    }
+    stages {
+        stage('checkout') {
+            steps {
+                git 'https://github.com/opstree/spring3hibernate.git'
+            }
+        }
+        stage( 'build' ) {
+                    steps {
+                        sh 'mvn package'
+                    }
+                }
+        stage('parallel') {
+            parallel {
+                stage( 'code_stability' ) {
+                    steps {
+                        sh 'mvn checkstyle:checkstyle'
+                    }    
+                }
+                stage( 'quality_analysis' ) {
+                    steps {
+                        sh 'mvn pmd:pmd'
+                    }
+                }
+                stage( 'findbugs' ) {
+                    steps {
+                        sh 'mvn findbugs:findbugs'
+                    }
+                }
+                stage( 'sure' ) {
+                    steps {
+                        sh 'mvn surefire-report:report'
+                    }
+                }
+                stage( 'coverage_analysis' ) {
+                    steps {
+                        sh 'mvn cobertura:cobertura'
+                    }
+                }
+            }
+        }
+        stage('generating_report') {
+            steps {
+                echo 'generating report'
+            }
+        }
+        stage('publish_artifacts') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.war', followSymlinks: false
+            }
+        }
+        stage('email_notification') {
+            steps {
+                echo 'email notification'
+            }
+        }
+    }
+}
