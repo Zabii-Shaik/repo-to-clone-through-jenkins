@@ -1,9 +1,9 @@
 pipeline {
     agent any
-    tools {
-        jdk 'jdk-11'
-        maven 'maven'
-    }
+    //tools {
+        //jdk 'jdk-11'
+      //  maven 'maven'
+    //}
     stages {
         stage('checkout') {
             steps {
@@ -12,34 +12,34 @@ pipeline {
         }
         stage( 'build' ) {
                     steps {
-                        sh 'mvn package'
+                        echo 'mvn package'
                     }
                 }
         stage('parallel') {
             parallel {
                 stage( 'code_stability' ) {
                     steps {
-                        sh 'mvn checkstyle:checkstyle'
+                        echo 'mvn checkstyle:checkstyle'
                     }    
                 }
                 stage( 'quality_analysis' ) {
                     steps {
-                        sh 'mvn pmd:pmd'
+                        echo 'mvn pmd:pmd'
                     }
                 }
                 stage( 'findbugs' ) {
                     steps {
-                        sh 'mvn findbugs:findbugs'
+                        echo 'mvn findbugs:findbugs'
                     }
                 }
                 stage( 'sure' ) {
                     steps {
-                        sh 'mvn surefire-report:report'
+                        echo 'mvn surefire-report:report'
                     }
                 }
                 stage( 'coverage_analysis' ) {
                     steps {
-                        sh 'mvn cobertura:cobertura'
+                        echo 'mvn cobertura:cobertura'
                     }
                 }
             }
@@ -51,7 +51,7 @@ pipeline {
         }
         stage('publish_artifacts') {
             steps {
-                archiveArtifacts artifacts: 'target/*.war', followSymlinks: false
+                echo 'archiveArtifacts artifacts: 'target/*.war'
             }
         }
         stage('email_notification') {
